@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+#####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+#####################################################################
+#use strict;
+use Getopt::Long;
+use File::Spec;
+my $Usage =<<EOF;
+======================================================================
+Function   : Converts Liberty file to a Synopsys db file
+----------------------------------------------------------------------
+Usage      : lib2db  -l <LibertyFile>
+======================================================================
+EOF
+my $result =  GetOptions('l:s');
+if((!defined $opt_l)){
+  print "$Usage";               
+  exit;
+}   
+
+###############################
+# Find the library name
+###############################
+open(FILE,">lc.cmd");
+print FILE "read_lib $opt_l\n";
+print FILE "set mylib [get_object_name [get_libs]]\n";
+print FILE "set output \"\$mylib.db\"\n"; 
+print FILE "write_lib \$mylib -output \$mylib.db\n";
+print FILE "exit;\n";
+close(FILE);
+system("lc_shell -f lc.cmd");
+system("rm lc.cmd");
+system("rm lc_shell_command.log");
+
