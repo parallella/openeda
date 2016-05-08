@@ -9,20 +9,18 @@ For exmple, some tool verilog read commands support the "-y" argument. We assume
 | VARIABLE       | DESCRIPTION                                   |
 |----------------|-----------------------------------------------|
 | OH_HOME        | Full path to OH repo                          |
+| OH_PROCESS     | Full path to process node (proprietary)       |
+| OH_EDA         | Full path to EDA script report (proprietary)  |
 | OH_VENDOR      | EDA vendor name                               |
-| PROCESS_HOME   | Full path to process node (proprietary)       |
-| EDA_HOME       | Full path to EDA script report (proprietary)  |
 
 ## DESIGN API
 
 | VARIABLE       | DESCRIPTION                                   |
 |----------------|-----------------------------------------------|
 | OH_DESIGN      | Name of top level design                      |
+| OH_DESIGNFILES | Design sources (verilog)                      |
 | OH_FLOORPLAN   | Physical floorplan                            |
 | OH_CONSTRAINTS | Synopsys Design Constraints                   |
-| OH_VERILOGTOP  | The top verilog file                          |
-| OH_VERILOGCFG  | Define variables                              |
-| OH_VERILOGLIBS | All other verilog files                       |
 | OH_EFFORT      | Implementation effort (eg "high")             |
 | OH_THREADS     | Number of parallel threads to use in tools    |
 
@@ -36,7 +34,7 @@ For exmple, some tool verilog read commands support the "-y" argument. We assume
 | OH_RCMODEL_MIN | Min corner wiring extraction model             |
 | OH_RCMODEL_MAX | Max corner wiring extraction model             |
 | OH_TECHMAP     | Maps tech file layers to GDS/LEF               |
-| OH_BLEEDING    | 1/0: indicates bleeding edge process node      |
+| OH_BLEEDING    | Indicates bleeding edge process node           |
 
 ## IP API 
 
@@ -46,5 +44,5 @@ For exmple, some tool verilog read commands support the "-y" argument. We assume
 | OH_LIBPATHS    | Search paths for timing $OH_LIBS               |
 | OH_LIBPHYS     | Full path to library layout(/tmp/stdcells.mw)  |
 | OH_MACROLIBS   | Full paths to $OH_MACROLIBS                    |
-| OH_MACROPATHS  | Search paths for timing $H_MACROLIBS           |
+| OH_MACROPATHS  | Search paths for timing $OH_MACROLIBS          |
 | OH_MACROPHYS   | Full path to macro layout(/tmp/sram.mw)        |
