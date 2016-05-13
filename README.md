@@ -1,7 +1,7 @@
 OpenEDA: 
 =====================================
 
-These variables represent all the informsation needed to implement a leading edge chip. The arguments will depend on actual EDA tools being used.
+These variables represent all the information needed to implement a leading edge chip. The arguments will depend on actual EDA tools being used.
 For exmple, some tool verilog read commands support the "-y" argument. We assume tcl script exists to drive each tool using these variables
 
 ## PROJECT SETTINGS
