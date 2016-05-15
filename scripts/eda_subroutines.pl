@@ -124,7 +124,7 @@ sub vlog_get_ports{
 		$interface=$2;
 		@list=split('\,',$interface);
 		foreach $sig (@list) {
-		    if($sig=~ /\s*(\w+)(.*?)(\w+$)/){
+		    if($sig=~ /\s*(\w+)(.*?)(\w+)\s*$/){
 			$dir=$1;
 			$bus=$2;
 			$name=$3;
@@ -136,7 +136,6 @@ sub vlog_get_ports{
 			$signal{$name}{start}=$start;
 			$signal{$name}{end}=$end;
 			$signal{$name}{cap}=0.0;
-			#print "$name $dir $end $start \n";
 		    }
 		}
 	    }
