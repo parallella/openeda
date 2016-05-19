@@ -71,3 +71,16 @@ OpenEDA:
 | .vh            | Verilog RTL Header File                         |
 | .rpt           | EDA tool reports                                |
 
+## EMACS HACK
+
+Place the following in your ~/.emacs file to turn on syntaxi highlighting
+
+```
+(setq auto-mode-alist (cons '("\\.sfp$" . tcl-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.upf$" . tcl-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.sdc$" . tcl-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.vg$" . verilog-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.vh$" . verilog-mode) auto-mode-alist))
+```
+
+ 
