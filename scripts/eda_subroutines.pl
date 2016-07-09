@@ -119,9 +119,13 @@ sub vlog_get_ports{
 	    $_=$line.$_;
 	    chomp($_);    
 	    #get module interface
-	    if (/^\s*module\s+(\w+)\s*\((.*)\)\;/) {
+	    if (/module\s+(\w+)(.*)/) {		
 		$module=$1;
 		$interface=$2;
+		#remove parameters
+		$interface =~ s/#\s*\(.*?\)//;
+		#remove parentheses
+		$interface =~ s/\((.*)\)/$1/;
 		@list=split('\,',$interface);
 		foreach $sig (@list) {
 		    if($sig=~ /\s*(\w+)(.*?)(\w+)\s*$/){
