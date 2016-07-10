@@ -21,7 +21,7 @@ Usage      : vlog2lib -v   <VerilogFile>
                       -sdc <SynopsysDesignConstraints>
                       -l   <LibraryName>
 ----------------------------------------------------------------------
-Notes      : File must be 2005 verilog netlist (not RTL)
+Notes      : File must be 2005 verilog style interface
              SDC file should be output by DC or similar tool
 ======================================================================
 EOF
@@ -35,8 +35,9 @@ if((!defined $opt_v)||(!defined $opt_sdc)||(!defined $opt_l)){
 #Get the ports from verilog
 ############################
 
-&vlog_rm_comments($opt_v,"tmp.v");
-($sigref, $module) = &vlog_get_ports("tmp.v");
+&vlog_rm_comments($opt_v,"/tmp/tmp.v");
+($sigref, $module) = &vlog_get_ports("/tmp/tmp.v");
+system("rm /tmp/tmp.v");
 
 ############################
 #Get Design Constraints
@@ -66,6 +67,7 @@ $cellhash{current} = 0.0;
 # Create liberty file
 #########################
 &liberty_create(\%libhash,\%cellhash,$sigref);
+
 
 
 
