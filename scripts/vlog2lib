@@ -1,0 +1,79 @@
+#!/usr/bin/perl
+use Cwd qw/abs_path/;
+use Getopt::Long;
+use File::Spec;
+my $abs_path = abs_path($0);
+$abs_path=~ s/(.*)\/([\w\.]+)/$1/;
+require "$abs_path/eda_subroutines.pl";
+#####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+#####################################################################
+#use strict;
+my %libhash;
+my %cellhash;
+my $Usage =<<EOF;
+======================================================================
+Function   : Creates a Liberty file from Verilog header
+----------------------------------------------------------------------
+Usage      : vlog2lib -v   <VerilogFile>
+                      -sdc <SynopsysDesignConstraints>
+                      -l   <LibraryName>
+----------------------------------------------------------------------
+Notes      : File must be 2005 verilog style interface
+             SDC file should be output by DC or similar tool
+======================================================================
+EOF
+my $result =  GetOptions('v:s','sdc:s', 'l:s', 'db:s');
+if((!defined $opt_v)||(!defined $opt_sdc)||(!defined $opt_l)){
+  print "$Usage";               
+  exit;
+}   
+
+############################
+#Get the ports from verilog
+############################
+
+&vlog_rm_comments($opt_v,"/tmp/tmp.v");
+($sigref, $module) = &vlog_get_ports("/tmp/tmp.v");
+system("rm /tmp/tmp.v");
+
+############################
+#Get Design Constraints
+############################
+
+#########################
+# default library data
+#########################
+$date = `date`;
+chomp($date);
+$libhash{name}     = $opt_l;
+$libhash{license}  = "MIT License"; 
+$libhash{rev}      = "1.0";
+$libhash{date}     = $date;
+$libhash{temp}     = 85;
+$libhash{volt}     = 0.8;
+$libhash{corner}   = tt0p8v85c;
+
+##########################
+# Default cell data
+#########################
+$cellhash{name}     = $module;
+$cellhash{area}    = 0.0; 
+$cellhash{current} = 0.0;
+
+##########################
+# Create liberty file
+#########################
+&liberty_create(\%libhash,\%cellhash,$sigref);
+
+
+
+
+
+
+
+
+
+

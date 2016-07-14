@@ -1,0 +1,40 @@
+#!/usr/bin/perl -w
+#####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+#####################################################################
+#use strict
+use Getopt::Long;
+use File::Spec;
+my $Usage =<<EOF;
+======================================================================
+
+Function : Parse DRC erors and generate summary table
+
+Usage : drcsum -e    Name of executable (eg "icv")
+               -f    Path to DRC results file "my_io.LAYOUT_ERRORS"
+
+Example : drc -e icv -f "my_io.LAYOUT_ERRORS" 
+
+======================================================================
+EOF
+my $result =  GetOptions('e:s', 'f:s');
+if((!defined $opt_e)||(!defined $opt_f)){
+  print "$Usage";               
+  exit;
+}   
+
+open(FILE,$opt_f);
+if($opt_e eq "icv"){
+    while(<FILE>){
+	if(/^\s+([\w\.\:]*?)\s*\:/){
+	    $error=$1;
+	}
+	elsif (/(\d+)\s+violation[s]* found/){
+	    $number=$1;
+	    print "$error\t$number\n";
+	}
+    }
+}
+close(FILE);

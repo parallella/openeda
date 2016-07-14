@@ -1,0 +1,36 @@
+#!/usr/bin/perl -w
+#####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+#####################################################################
+#use strict
+use Getopt::Long;
+use File::Spec;
+my $Usage =<<EOF;
+======================================================================
+
+Function : Design Rule Checking
+
+Usage : drc -e    Name of executable (eg icv for synopsys)
+            -g    Path to GDS to check
+            -c    Name of top level cell in GDS to check
+            -m    Path to GDS layer mapping file
+            -r    Path to runset/rule file
+            [-args Arguments to pass to executable enclosed in quotes]
+
+Example : drc -e icv -g my.gds -c ecore -m 28.gdsmap -r 28.rul
+
+======================================================================
+EOF
+my $result =  GetOptions('e:s', 'g:s', 'c:s', 'm:s', 'r:s', 'args:s');
+if((!defined $opt_e)||(!defined $opt_g)||(!defined $opt_c)||(!defined $opt_m)||(!defined $opt_r)){
+  print "$Usage";               
+  exit;
+}   
+
+if($opt_e eq "icv"){
+    $CMD = "icv -i $opt_g -c $opt_c -lf $opt_m -vue $opt_args $opt_r";
+    print "RUNNING $CMD";
+    system("$CMD");
+}

@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 #####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
 #Author    : Andreas Olofsson
-#License   : ??
 #####################################################################
 #use strict
 use Getopt::Long;

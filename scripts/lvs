@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+#################################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+##################################################################################
+#use strict
+use Getopt::Long;
+use File::Spec;
+my $Usage =<<EOF;
+=================================================================================
+
+Function : Layout vs Schematic
+
+Usage : lvs -e    Name of executable (eg icv for synopsys IC Validator)
+            -g    Path to GDS to check
+            -s    Path to spice netlist
+            -c    Name of top level cell in GDS to check
+            -m    Path to GDS layer mapping file
+            -r    Path to runset/rule file
+            -args Arguments to pass to executable enclosed in quotes
+
+Example : lvs -e icv -g my.gds -s my.spi -c ecore -m 28.gdsmap -r 28.rul
+
+=================================================================================
+EOF
+my $result =  GetOptions('e:s','g:s','s:s', 'c:s', 'm:s', 'r:s', 'arg:s');  
+if((!defined $opt_e)||(!defined $opt_g)||(!defined $opt_s)||(!defined $opt_c)||(!defined $opt_m)||(!defined $opt_r)){
+  print "$Usage";               
+  exit;
+}   
+##################################################
+
+if($opt_exe eq "icv"){    
+    $CMD="icv -i $opt_gds -n $opt_s -c $opt_c -lf $opt_m $opt_arg $opt_rs";
+    print "RUNNING $CMD";
+    system("$CMD");
+}
