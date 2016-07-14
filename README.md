@@ -48,3 +48,12 @@ For exmple, some tool verilog read commands support the "-y" argument. We assume
 | OH_MACROLIBS   | Full paths to $OH_MACROLIBS                    |
 | OH_MACROPATHS  | Search paths for timing $H_MACROLIBS           |
 | OH_MACROPHYS   | Full path to macro layout(/tmp/sram.mw)        |
+
+## REFERENCES
+
+http://opencircuitdesign.com/verilog
+http://vlsiarch.ecen.okstate.edu/flow/
+http://vlsi.colorado.edu/~vis/
+http://www.eecs.berkeley.edu/~alanmi/abc/
+http://www.ecs.umass.edu/ece/labs/vlsicad/ece667/links/blif.pdf
+https://embedded.eecs.berkeley.edu/Alumni/pinhong/scriptEDA/
