@@ -21,7 +21,6 @@ use strict;
 #
 #####################################################################
 # SIGNAL STRUCTURE:
-#
 # $sighash{$sig}{name}
 # $sighash{$sig}{dir}
 # $sighash{$sig}{end}
@@ -117,9 +116,9 @@ sub vlog_get_ports{
 	}
 	else {
 	    $_=$line.$_;
-	    chomp($_);    
+	    chomp($_);
 	    #get module interface
-	    if (/module\s+(\w+)(.*)/) {		
+	    if (/module\s+(\w+)(.*)\;/) {		
 		$module=$1;
 		$interface=$2;
 		#remove parameters
