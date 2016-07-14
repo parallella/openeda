@@ -135,6 +135,9 @@ sub vlog_get_ports{
 			    $end=$1;
 			    $start=$2;
 			}
+			else{
+			    $end=0;
+			}
 			$signal{$name}{dir}=$dir;
 			$signal{$name}{start}=$start;
 			$signal{$name}{end}=$end;
