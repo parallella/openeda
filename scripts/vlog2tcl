@@ -1,0 +1,63 @@
+#!/usr/bin/perl
+use Cwd qw/abs_path/;
+use Getopt::Long;
+use File::Spec;
+my $abs_path = abs_path($0);
+$abs_path=~ s/(.*)\/([\w\.]+)/$1/;
+require "$abs_path/eda_subroutines.pl";
+#####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+#####################################################################
+#use strict;
+my %libhash;
+my %cellhash;
+my $Usage =<<EOF;
+======================================================================
+Function   : Converts a verilog header file to tcl
+----------------------------------------------------------------------
+Usage      : vlog2tcl -v   <Verilog Header File>
+----------------------------------------------------------------------
+Notes      : Hacky
+======================================================================
+EOF
+my $result =  GetOptions('v:s');
+if((!defined $opt_v)){
+  print "$Usage";               
+  exit;
+}   
+
+############################
+#Get the ports from verilog
+############################
+
+&vlog_rm_comments($opt_v,"/tmp/tmp.v");
+
+($sigref, $module) = &vlog_get_ports("/tmp/tmp.v");
+open(FILE,"/tmp/tmp.v");
+while(<FILE>){
+    if(/\`define\s+(\w+)\s+(.*)/){
+	$var = $1;
+	$val = $2;
+	#print $_;
+	#remove quotations, not needed
+	#if an arithmetic operator is detected, assume variable defined 
+	if($val=~ /[\-,\*,\%,\/,\&,\|,\+,\^]/){
+	    $val= "[expr $val]";
+	    print "set $var $val; #$_"
+	}
+	elsif ($val=~ /\w/){
+	    #Number format conversions
+	    $val=~ s/\d+\'h(\d+)/[expr 0x$1]/;	
+	    print "set $var $val; #$_"
+	}
+    }
+}
+system("rm /tmp/tmp.v");
+
+
+
+
+
+
