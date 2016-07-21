@@ -30,7 +30,11 @@ use strict;
 # $sighash{$sig}{type}
 # $sighash{$sig}{clk}
 # $sighash{$sig}{cap}
-#
+# $sighash{$sig}{x0}
+# $sighash{$sig}{y0}
+# $sighash{$sig}{x1}
+# $sighash{$sig}{y1}
+# $sighash{$sig}{metal}
 ####################################################################
 
 ####################################################################
@@ -266,5 +270,39 @@ library    ($libhash{name}) {
 ";
 }
 ############################################################################
+sub read_floorplan {
+
+    my $file   = $_[0];
+    my %signal;
+    my $pin;
+    my $match;
+    open(FILE,"$file") || die "ERROR: Couldn't open $file\n";
+
+    while(<FILE>){
+	#set obj [get_terminal {"so_mesh_wait_out[0]"}]
+	if(/set\s+obj\s+\[get_terminal\s+\{\"(.*)\"\}\]/){
+	    $pin = $1;
+	    $match = 1;
+	}
+	# Get coordinates
+	#set_attribute -quiet $obj bbox {{141.340 0.000} {141.380 1.120}}
+	elsif ($match && (/set_attribute\s+\-quiet\s+\$obj\s+bbox\s+{{([\d\.]+)\s+([\d\.]+)}\s+{([\d\.]+)\s+([\d\.]+)}}/)){
+	    $signal{$pin}{"x0"}=$1;
+	    $signal{$pin}{"y0"}=$2;
+	    $signal{$pin}{"x1"}=$3;
+	    $signal{$pin}{"y1"}=$4;
+	}
+	# Get metal layer
+	#set_attribute -quiet $obj layer  M7
+	elsif ($match && (/set_attribute\s+\-quiet\s+\$obj\s+layer\s+(\w+)/)){
+	    $signal{$pin}{"metal"}=$1;
+	}
+	elsif(/get_terminal/){
+	    $match = 0;
+	}
+    }
+    close (FILE);
+    return (\%signal);		
+}
 1;
 
