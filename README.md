@@ -1,53 +1,19 @@
 OpenEDA: 
 =====================================
 
-## DESIGN API
+## Unix Shell Variables
 
-| VARIABLE       | DESCRIPTION                                   |
-|----------------|-----------------------------------------------|
-| OH_DESIGN      | Top level design name                         |
-| OH_DESIGNFILES | Design sources                                |
-| OH_FLOORPLAN   | Physical floorplan (DEF preferred)            |
-| OH_UPF         | Unified Power Format Specification            |
-| OH_CONSTRAINTS | Synopsys Design Constraints                   |
+| Variable          | Description                                     |
+|-------------------|-------------------------------------------------|
+| OH_HOME           | Path to OH repository                           |
+| OPENEDA_HOME      | Path to Open EDA repository                     |
+| EDA_HOME          | Path to proprietary PNR tool scripts directory  |
+| PROJ_HOME         | Path to your project home directory             |
+| PROCESS_HOME      | Path to foundry home directory                  |
 
-## PROJECT SETTINGS
+## IP Library Setup
 
-| VARIABLE       | DESCRIPTION                                   |
-|----------------|-----------------------------------------------|
-| OH_HOME        | Full path to OH repo                          |
-| OH_PROCESS     | Full path to process node (proprietary)       |
-| OH_EDA         | Full path to EDA script report (proprietary)  |
-| OH_VENDOR      | EDA vendor name                               |
-| OH_EFFORT      | Implementation effort (eg "high")             |
-| OH_THREADS     | Number of parallel threads to use in tools    |
-| OH_REV         | Revision/date stamp implementation runs       |
-
-## PROCESS API
-
-| VARIABLE       | DESCRIPTION                                    |
-|----------------|------------------------------------------------|
-| OH_TECHFILE    | Place and route technology file                |
-| OH_LAYER_MIN   | Min routing layer name (eg "M2")               |
-| OH_LAYER_MAX   | Max routing layer name (eg "M7")               |
-| OH_RCMODEL_MIN | Min corner wiring extraction model             |
-| OH_RCMODEL_MAX | Max corner wiring extraction model             |
-| OH_TECHMAP     | Maps tech file layers to GDS/LEF               |
-| OH_BLEEDING    | Indicates bleeding edge process node           |
-
-## IP API 
-
-| VARIABLE       | DESCRIPTION                                    |
-|----------------|------------------------------------------------|
-| OH_LIBS        | List of timing libraries (eg stdcells.db)      |
-| OH_LIBPATHS    | Search paths for timing $OH_LIBS               |
-| OH_LIBPHYS     | Full path to library layout(/tmp/stdcells.mw)  |
-| OH_MACROLIBS   | Full paths to $OH_MACROLIBS                    |
-| OH_MACROPATHS  | Search paths for timing $H_MACROLIBS           |
-| OH_MACROPHYS   | Full path to macro layout(/tmp/sram.mw)        |
-
-
-| VARIABLE          | DESCRIPTION                                     |
+| Variable          | Description                                     |
 |-------------------|-------------------------------------------------|
 | OH_LIBS           | List of target libraries (eg stdcells.db)       |
 | OH_LIBPATHS       | Search paths for target $OH_LIBS                |
@@ -55,7 +21,9 @@ OpenEDA:
 | OH_MACROLIBS      | List of macro libs (eg. /home/sram.db)          | 
 | OH_MACROPHYS      | Full path to macro layout(/home/lib/sram_mw)    |
 | OH_MACROPATHS     | Optional search paths for $OH_MACROLIBS         |
-| OH_CELLS_DRIVE    | Name of default driver cell for constraints     |
+| OH_GDSLIBS        | List of all library GDS files                   |
+| OH_LIBRULES       | Special tool specific library rules             |
+| OH_CELLS_HEADER   | List of header cells to use                     |
 | OH_CELLS_CLK      | List of cells to use for CTS                    |
 | OH_CELLS_ICG      | List of clock gating cells                      |
 | OH_CELLS_HOLD     | List of preferred hold fix cells                |
@@ -65,6 +33,71 @@ OpenEDA:
 | OH_CELLS_DCAP     | List of decoupling cap cells                    |
 | OH_CELLS_FILL     | List of filler cells                            |
 | OH_CELLS_ISO      | List of isolation cells                         |
+| OH_CELLS_DRIVE    | Name of default driver cell for constraints     |
+| OH_CELLS_PADFILL  | Name of io pad filler cells                     |
+| OH_CELLS_TAP      | List of tap cells
+
+## Layout Rules (in micron)
+
+| Variable         | Description                                          |
+|-------------------|------------------------------------------------------|
+| OH_FINGRID        | Finfet grid size                                     |
+| OH_M1GRID         | Metal 1 grid size                                    |
+| OH_M2GRID         | Metal 2 grid size                                    |
+| OH_M3GRID         | Metal 3 grid size                                    |
+| OH_M4GRID         | Metal 4 grid size                                    |
+| OH_M5GRID         | Metal 5 grid size                                    |
+| OH_M6GRID         | Metal 6 grid size                                    |
+| OH_M7GRID         | Metal 7 grid size                                    |
+| OH_M8GRID         | Metal 8 grid size                                    |
+| OH_M9GRID         | Metal 9 grid size                                    |
+| OH_M10GRID        | Metal 10 grid size                                   |
+| OH_M11GRID        | Metal 11 grid size                                   |
+| OH_M12GRID        | Metal 12 grid size                                   |
+| OH_M13GRID        | Metal 13 grid size                                   |
+| OH_APGRID         | RDL routing grid                                     |
+| OH_TAPSPACE       | Maximum distance between tap cells                   |
+| OH_ROW            | Standard cell library row height (12, 9, track etc)  |
+
+## Place and Route Tool Settings
+
+| Variable           | Description                                          |
+|--------------------|------------------------------------------------------|
+| OH_VENDOR          | Vendor namr for PNR tool                             |
+| OH_TECHFILE        | Place and route tool technology file                 |
+| OH_TECHMAP         | Layer Map file for PNR tool                          |
+| OH_GDSMAP          | Mapping file for streaming out GDS                   |
+| OH_DEBUG           | Enables verbose printing                             | 
+| OH_LAYER_MIN       | Minimum routing layer                                |
+| OH_LAYER_MAX       | Maximum routing layer                                |
+| OH_BLEEDING        | Set to "1" below 22nm                                |
+| OH_THREADS         | Threads to use for PNR tool                          |
+| OH_EFFORT          | Global effort setting for PNR tool                   |
+| OH_REV             | Project specific revision                            |
+| OH_VDD             | Global VDD net name ("vdd")                          |
+| OH_VSS             | Global VSS net name ("vss")                          |
+| OH_ANTCMD          | Antenna insertion command                            |
+| OH_VIACMD          | Via insertion command                                |
+| OH_TAPCMD          | Tap cell insertion command                           |
+| OH_BOUNDARY_CMD    | Boundary cell insertion command                      |
+| OH_POLYFILL_RULES  | Polyfill run set                                     |
+| OH_METALFILL_RULES | Metalfill run set                                    |
+| OH_LVS_RULES       | LVS signoff run set                                  |
+| OH_DRC_RULES       | DRC signoff run set                                  |
+
+## Design Settings
+
+| Variable        | Description                                          |
+|-----------------|------------------------------------------------------|
+| OH_DESIGN       | Name of the design                                   |
+| OH_UPF          | UPF Power Definition file                            |
+| OH_CONSTRAINTS  | Synopsys Design Constraints                          |
+| OH_FLOORPLAN    | Floorplan file (proprietary or DEF)                  |
+| OH_POWER        | Power grid creation command file                     |
+| OH_SPECIAL      | Special routing nets and ports                       |
+| OH_DESIGNPATHS  | Paths to design specific .libs                       |
+| OH_DESIGNPHYS   | Full paths to design layout libraries                |
+| OH_DESIGNLIBS   | List of logical libraries                            |
 
 ## FILES
 
