@@ -202,17 +202,31 @@ sub liberty_create {
     
     ## Create all pins
     foreach $sig (keys %sighash) {
-	#TODO:make choice
-	if($sighash{$sig}{end} > 0) {
-	    print "        bus ($sig) {\n";
-	    print "	       bus_type    : ${sig}_bus_$sighash{$sig}{end}_to_$sighash{$sig}{start} ;\n";
-	}
+	#supplies limited to vdd/vss for now
+	if($sig=~ /^vdd|^vss/){
+	    print "        pg_pin ( $sig ) {\n";
+	    print "                voltage_name : $sig;\n";
+	    print "                direction : input;\n";
+	    if($sig=~ /vss/){
+		print "                pg_type : primary_ground;\n";
+	    }
+	    else {
+		print "                pg_type : primary_power;\n";
+	    }	 
+	    print "        }\n";
+	} 
 	else {
-	    print "        pin ($sig) {\n";
+	    if($sighash{$sig}{end} > 0) {
+		print "        bus ($sig) {\n";
+		print "	       bus_type    : ${sig}_bus_$sighash{$sig}{end}_to_$sighash{$sig}{start} ;\n";
+	    }
+	    else {
+		print "        pin ($sig) {\n";
+	    }
+	    print "	       direction   : $sighash{$sig}{dir};\n";
+	    print "	       capacitance : $sighash{$sig}{cap};\n";
+	    print "        }\n";
 	}
-	print "	       direction   : $sighash{$sig}{dir};\n";
-	print "	       capacitance : $sighash{$sig}{cap};\n";
-	print "        }\n";
     }
     ## Close cell/lib
     print "     }\n";
@@ -237,6 +251,9 @@ library    ($libhash{name}) {
     revision                      : \"$libhash{rev}\" ;
     delay_model                   : table_lookup ;
     simulation                    : true ;
+    voltage_map ( vdd,  $libhash{volt} ) ;  
+    voltage_map ( vddm, $libhash{volt} ) ;
+    voltage_map ( vss,  0.0) ;
     nom_process                   : 1 ;
     nom_temperature               : $libhash{temp} ;
     nom_voltage                   : $libhash{volt} ;
