@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+#####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+#####################################################################
+#use strict
+use Getopt::Long;
+use File::Spec;
+my $Usage =<<EOF;
+======================================================================
+Function   : Converts GDS to Proprietary Database (MW)
+
+Usage      : gds2lib -tf  <Technology File> 
+                     -gds <GDS File> 
+                     -map <GDS Mapping MAP> 
+                     -l   <Library nbame>          
+Example    : gds2lib -tf 3nm.tf -gds sram.gds -map gds.map -l my_mw_lib
+
+======================================================================
+EOF
+my $result =  GetOptions('tf:s','gds:s','map:s', 'l:s' );
+if((!defined $opt_tf)||(!defined $opt_gds)||(!defined $opt_map)||(!defined $opt_l)){
+  print "$Usage";               
+  exit;
+}   
+
+$cmd_file = "/tmp/libprep.tcl";
+open(FILE,">$cmd_file");
+print FILE "extend_mw_layers\n";
+print FILE "create_mw_lib -technology $opt_tf $opt_l\n";
+print FILE "read_gds -lib_name $opt_l -layer_mapping \"$opt_map\" \"$opt_gds\"\n"; 
+print FILE "exit\n";
+close(FILE);
+system("Milkyway -galaxy -nogui -tcl -log read_lef.log -file $cmd_file");
+close(FILE);
+system("rm $cmd_file");
+
