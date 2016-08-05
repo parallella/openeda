@@ -29,7 +29,10 @@ $cmd_file = "/tmp/libprep.tcl";
 open(FILE,">$cmd_file");
 print FILE "extend_mw_layers\n";
 print FILE "create_mw_lib -technology $opt_tf $opt_l\n";
-print FILE "read_gds -lib_name $opt_l -layer_mapping \"$opt_map\" \"$opt_gds\"\n"; 
+@list = split(' ',$opt_gds);
+foreach $file (@list) {
+    print FILE "read_gds -lib_name $opt_l -layer_mapping \"$opt_map\" \"$file\"\n"; 
+}
 print FILE "exit\n";
 close(FILE);
 system("Milkyway -galaxy -nogui -tcl -log read_lef.log -file $cmd_file");
