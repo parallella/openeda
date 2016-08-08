@@ -1,0 +1,61 @@
+#!/usr/bin/perl
+#####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+#####################################################################
+#use strict
+use Getopt::Long;
+use File::Spec;
+my $Usage =<<EOF;
+======================================================================
+Function   : Compares cadence layer map to synopsys layer map
+Usage      : mapcompare -c <Map>
+                        -s <Syn>                            
+======================================================================
+EOF
+my $result =  GetOptions('c:s', 's:s');
+if((!defined $opt_c) ||(!defined $opt_s)){
+  print "$Usage";               
+  exit;
+}   
+#CADENCE
+open(FILE,"$opt_c");
+while(<FILE>){
+    if(/\#/){
+    }
+    elsif(/(\w+)\s+(\w+)\s+(\d+)\s+(\d+)/){
+	$cadence{$3}{$4}=$1;
+    }
+}
+close(FILE);
+#SYNOPSYS
+open(FILE,"$opt_s");
+while(<FILE>){
+    if(/\;/){
+    }
+    elsif(/(\w+)\s+(\d+)\:(\d+)\s+(\d+)\:(\d+)/){
+	$synopsys{$4}{$5}="$2$3"; 
+    }
+}
+close(FILE);
+
+#MISSING LAYERS IN SYNOPSYS
+foreach $layer (keys %cadence) {
+    foreach $type (keys %{$cadence{$layer}}) {
+	if(!defined $synopsys{$layer}{$type}){
+	    print "MISSING IN SYNOPSYS $layer $type $cadence{$layer}{$type}\n";
+	}
+    }
+}
+
+#MISSING LAYERS IN CADENCE
+foreach $layer (keys %synopsys) {
+    foreach $type (keys %{$synopsys{$layer}}) {
+	if(!defined $cadence{$layer}{$type}){
+	    print "MISSING IN CADENCE $layer $type $cadence{$layer}{$type}\n";
+	}
+    }
+}
+
+
