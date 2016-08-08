@@ -19,13 +19,19 @@ if((!defined $opt_tf)){
   print "$Usage";               
   exit;
 }   
+$max=256;
 
-#Set a Default Map
-for $i (0..255){
-    $Map[$i]="x$i"; 
+@colormap=("mediumRed","salmon","aquamarine","lawnGreen","mediumBlue","deepPurple","darkPurple","lavenderBlush");
+
+#Set Default Layer Numbers
+for $i (0..($max-1)){
+    $index=$i%8;
+    $Map{$i}{"layer"}="x$i"; 
+    $Map{$i}{"color"}=$colormap[$i%8];
+    $Map{$i}{"pattern"}="lightDot"; 
 }
 
-#Reading in Layers
+#Reading in Layers (numbers + colors)
 open(FILE,"$opt_tf");
 while(<FILE>){
     if(/Layer\s+\"(\w+)\"/){
@@ -33,146 +39,19 @@ while(<FILE>){
     }
     elsif(/layerNumber\s+\=\s*(\d+)/){
 	$Number=$1;
-	$Map[$Number]=$Layer;
+	if($Number<$max){
+	    $Map{$Number}{"layer"} = $Layer;
+	}
     }
+    # create color from tech file, need map
 }
 
-# Print out layer map
-print "
-# Create a layer for 0 - 255 with random fills/colors
-edbTFCreateLayer $Map[0] 0 mask mediumRed lightRand1 solid 0
-edbTFCreateLayer $Map[1] 1 mask salmon lightRand1 solid 0
-edbTFCreateLayer $Map[2] 2 mask aquamarine lightRand1 solid 0
-edbTFCreateLayer $Map[3] 3 mask lawnGreen lightRand1 solid 0
-edbTFCreateLayer $Map[4] 4 mask mediumBlue lightRand1 solid 0
-edbTFCreateLayer $Map[5] 5 mask deepPurple lightRand1 solid 0
-edbTFCreateLayer $Map[6] 6 mask darkPurple lightRand1 solid 0
-edbTFCreateLayer $Map[7] 7 mask lavenderBlush lightRand1 solid 0
-edbTFCreateLayer $Map[8] 8 mask gold lightRand1 solid 0
-edbTFCreateLayer $Map[9] 9 mask green lightRand1 solid 0
-edbTFCreateLayer $Map[10] 10 mask mediumRed lightRand2 solid 0
-edbTFCreateLayer $Map[11] 11 mask salmon lightRand2 solid 0
-edbTFCreateLayer $Map[12] 12 mask aquamarine lightRand2 solid 0
-edbTFCreateLayer $Map[13] 13 mask lawnGreen lightRand2 solid 0
-edbTFCreateLayer $Map[14] 14 mask mediumBlue lightRand2 solid 0
-edbTFCreateLayer $Map[15] 15 mask deepPurple lightRand2 solid 0
-edbTFCreateLayer $Map[16] 16 mask darkPurple lightRand2 solid 0
-edbTFCreateLayer $Map[17] 17 mask lavenderBlush lightRand2 solid 0
-edbTFCreateLayer $Map[18] 18 mask gold lightRand2 solid 0
-edbTFCreateLayer $Map[19] 19 mask green lightRand2 solid 0
-edbTFCreateLayer $Map[20] 20 mask mediumRed lightRand3 solid 0
-edbTFCreateLayer $Map[21] 21 mask salmon lightRand3 solid 0
-edbTFCreateLayer $Map[22] 22 mask aquamarine lightRand3 solid 0
-edbTFCreateLayer $Map[23] 23 mask lawnGreen lightRand3 solid 0
-edbTFCreateLayer $Map[24] 24 mask mediumBlue lightRand3 solid 0
-edbTFCreateLayer $Map[25] 25 mask deepPurple lightRand3 solid 0
-edbTFCreateLayer $Map[26] 26 mask darkPurple lightRand3 solid 0
-edbTFCreateLayer $Map[27] 27 mask lavenderBlush lightRand3 solid 0
-edbTFCreateLayer $Map[28] 28 mask gold lightRand3 solid 0
-edbTFCreateLayer $Map[29] 29 mask green lightRand3 solid 0
-edbTFCreateLayer $Map[30] 30 mask mediumRed lightDot solid 0
-edbTFCreateLayer $Map[31] 31 mask salmon lightDot solid 0
-edbTFCreateLayer $Map[32] 32 mask aquamarine lightDot solid 0
-edbTFCreateLayer $Map[33] 33 mask lawnGreen lightDot solid 0
-edbTFCreateLayer $Map[34] 34 mask mediumBlue lightDot solid 0
-edbTFCreateLayer $Map[35] 35 mask deepPurple lightDot solid 0
-edbTFCreateLayer $Map[36] 36 mask darkPurple lightDot solid 0
-edbTFCreateLayer $Map[37] 37 mask lavenderBlush lightDot solid 0
-edbTFCreateLayer $Map[38] 38 mask gold lightDot solid 0
-edbTFCreateLayer $Map[39] 39 mask green lightDot solid 0
-edbTFCreateLayer $Map[40] 40 mask mediumRed lightAngle135 solid 0
-edbTFCreateLayer $Map[41] 41 mask salmon lightAngle135 solid 0
-edbTFCreateLayer $Map[42] 42 mask aquamarine lightAngle135 solid 0
-edbTFCreateLayer $Map[43] 43 mask lawnGreen lightAngle135 solid 0
-edbTFCreateLayer $Map[44] 44 mask mediumBlue lightAngle135 solid 0
-edbTFCreateLayer $Map[45] 45 mask deepPurple lightAngle135 solid 0
-edbTFCreateLayer $Map[46] 46 mask darkPurple lightAngle135 solid 0
-edbTFCreateLayer $Map[47] 47 mask lavenderBlush lightAngle135 solid 0
-edbTFCreateLayer $Map[48] 48 mask gold lightAngle135 solid 0
-edbTFCreateLayer $Map[49] 49 mask green lightAngle135 solid 0
-edbTFCreateLayer $Map[50] 50 mask mediumRed lightAngle45 solid 0
-edbTFCreateLayer $Map[51] 51 mask salmon lightAngle45 solid 0
-edbTFCreateLayer $Map[52] 52 mask aquamarine lightAngle45 solid 0
-edbTFCreateLayer $Map[53] 53 mask lawnGreen lightAngle45 solid 0
-edbTFCreateLayer $Map[54] 54 mask mediumBlue lightAngle45 solid 0
-edbTFCreateLayer $Map[55] 55 mask deepPurple lightAngle45 solid 0
-edbTFCreateLayer $Map[56] 56 mask darkPurple lightAngle45 solid 0
-edbTFCreateLayer $Map[57] 57 mask lavenderBlush lightAngle45 solid 0
-edbTFCreateLayer $Map[58] 58 mask gold lightAngle45 solid 0
-edbTFCreateLayer $Map[59] 59 mask green lightAngle45 solid 0
-edbTFCreateLayer $Map[60] 60 mask mediumRed coarseDot solid 0
-edbTFCreateLayer $Map[61] 61 mask salmon coarseDot solid 0
-edbTFCreateLayer $Map[62] 62 mask aquamarine coarseDot solid 0
-edbTFCreateLayer $Map[63] 63 mask lawnGreen coarseDot solid 0
-edbTFCreateLayer $Map[64] 64 mask mediumBlue coarseDot solid 0
-edbTFCreateLayer $Map[65] 65 mask deepPurple coarseDot solid 0
-edbTFCreateLayer $Map[66] 66 mask darkPurple coarseDot solid 0
-edbTFCreateLayer $Map[67] 67 mask lavenderBlush coarseDot solid 0
-edbTFCreateLayer $Map[68] 68 mask gold coarseDot solid 0
-edbTFCreateLayer $Map[69] 69 mask green coarseDot solid 0
-edbTFCreateLayer $Map[70] 70 mask mediumRed coarseAngle45 solid 0
-edbTFCreateLayer $Map[71] 71 mask salmon coarseAngle45 solid 0
-edbTFCreateLayer $Map[72] 72 mask aquamarine coarseAngle45 solid 0
-edbTFCreateLayer $Map[73] 73 mask lawnGreen coarseAngle45 solid 0
-edbTFCreateLayer $Map[74] 74 mask mediumBlue coarseAngle45 solid 0
-edbTFCreateLayer $Map[75] 75 mask deepPurple coarseAngle45 solid 0
-edbTFCreateLayer $Map[76] 76 mask darkPurple coarseAngle45 solid 0
-edbTFCreateLayer $Map[77] 77 mask lavenderBlush coarseAngle45 solid 0
-edbTFCreateLayer $Map[78] 78 mask gold coarseAngle45 solid 0
-edbTFCreateLayer $Map[79] 79 mask green coarseAngle45 solid 0
-edbTFCreateLayer $Map[80] 80 mask mediumRed coarseAngle135 solid 0
-edbTFCreateLayer $Map[81] 81 mask salmon coarseAngle135 solid 0
-edbTFCreateLayer $Map[82] 82 mask aquamarine coarseAngle135 solid 0
-edbTFCreateLayer $Map[83] 83 mask lawnGreen coarseAngle135 solid 0
-edbTFCreateLayer $Map[84] 84 mask mediumBlue coarseAngle135 solid 0
-edbTFCreateLayer $Map[85] 85 mask deepPurple coarseAngle135 solid 0
-edbTFCreateLayer $Map[86] 86 mask darkPurple coarseAngle135 solid 0
-edbTFCreateLayer $Map[87] 87 mask lavenderBlush coarseAngle135 solid 0
-edbTFCreateLayer $Map[88] 88 mask gold coarseAngle135 solid 0
-edbTFCreateLayer $Map[89] 89 mask green coarseAngle135 solid 0
-edbTFCreateLayer $Map[90] 90 mask mediumRed fineAngle45 solid 0
-edbTFCreateLayer $Map[91] 91 mask salmon fineAngle45 solid 0
-edbTFCreateLayer $Map[92] 92 mask aquamarine fineAngle45 solid 0
-edbTFCreateLayer $Map[93] 93 mask lawnGreen fineAngle45 solid 0
-edbTFCreateLayer $Map[94] 94 mask mediumBlue fineAngle45 solid 0
-edbTFCreateLayer $Map[95] 95 mask deepPurple fineAngle45 solid 0
-edbTFCreateLayer $Map[96] 96 mask darkPurple fineAngle45 solid 0
-edbTFCreateLayer $Map[97] 97 mask lavenderBlush fineAngle45 solid 0
-edbTFCreateLayer $Map[98] 98 mask gold fineAngle45 solid 0
-edbTFCreateLayer $Map[99] 99 mask green fineAngle45 solid 0
-edbTFCreateLayer $Map[100] 100 mask mediumRed fineAngle135 solid 0
-edbTFCreateLayer $Map[101] 101 mask salmon fineAngle135 solid 0
-edbTFCreateLayer $Map[102] 102 mask aquamarine fineAngle135 solid 0
-edbTFCreateLayer $Map[103] 103 mask lawnGreen fineAngle135 solid 0
-edbTFCreateLayer $Map[104] 104 mask mediumBlue fineAngle135 solid 0
-edbTFCreateLayer $Map[105] 105 mask deepPurple fineAngle135 solid 0
-edbTFCreateLayer $Map[106] 106 mask darkPurple fineAngle135 solid 0
-edbTFCreateLayer $Map[107] 107 mask lavenderBlush fineAngle135 solid 0
-edbTFCreateLayer $Map[108] 108 mask gold fineAngle135 solid 0
-edbTFCreateLayer $Map[109] 109 mask green fineAngle135 solid 0
-edbTFCreateLayer $Map[110] 110 mask mediumRed fwdslash solid 0
-edbTFCreateLayer $Map[111] 111 mask salmon fwdslash solid 0
-edbTFCreateLayer $Map[112] 112 mask aquamarine fwdslash solid 0
-edbTFCreateLayer $Map[113] 113 mask lawnGreen fwdslash solid 0
-edbTFCreateLayer $Map[114] 114 mask mediumBlue fwdslash solid 0
-edbTFCreateLayer $Map[115] 115 mask deepPurple fwdslash solid 0
-edbTFCreateLayer $Map[116] 116 mask darkPurple fwdslash solid 0
-edbTFCreateLayer $Map[117] 117 mask lavenderBlush fwdslash solid 0
-edbTFCreateLayer $Map[118] 118 mask gold fwdslash solid 0
-edbTFCreateLayer $Map[119] 119 mask green fwdslash solid 0
-edbTFCreateLayer $Map[120] 120 mask mediumRed zigzag solid 0
-edbTFCreateLayer $Map[121] 121 mask salmon zigzag solid 0
-edbTFCreateLayer $Map[122] 122 mask aquamarine zigzag solid 0
-edbTFCreateLayer $Map[123] 123 mask lawnGreen zigzag solid 0
-edbTFCreateLayer $Map[124] 124 mask mediumBlue zigzag solid 0
-edbTFCreateLayer $Map[125] 125 mask deepPurple zigzag solid 0
-edbTFCreateLayer $Map[126] 126 mask darkPurple zigzag solid 0
-edbTFCreateLayer $Map[127] 127 mask lavenderBlush zigzag solid 0
-edbTFCreateLayer $Map[128] 128 mask gold zigzag solid 0
-edbTFCreateLayer $Map[129] 129 mask green zigzag solid 0
-";
+# Print out layers
+foreach $i (sort { $a <=> $b } keys %Map) {
+    print "edbTFCreateLayer $Map{$i}{\"layer\"} $i mask $Map{$i}{color} $Map{$i}{pattern} solid 0\n";
+}
 
-# Print out default settings
+# Print out other default settings
 print "
 # Define all fonts, but 0 should always be font1000
 # and 8 should be the same for schematic use
