@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+#####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+#####################################################################
+#use strict
+use Getopt::Long;
+use File::Spec;
+my $Usage =<<EOF;
+======================================================================
+Function   : Layer by layer comparison of cell two separate GDS files
+Usage      : gdscompare -gds0 <Golden GDS>
+                        -gds1 <Second GDS>
+                        -c    <Cell to Check>
+                        -e    <Executable>
+======================================================================
+EOF
+my $result =  GetOptions('c:s', 'gds0:s', 'gds1:s', 'e:s');
+if((!defined $opt_c) ||(!defined $opt_gds0) || (!defined $opt_gds1) ||(!defined $opt_e)  ){
+  print "$Usage";               
+  exit;
+}   
+
+if($opt_e eq "icv"){
+    system("icv_lvl $opt_gds0 $opt_gds1 -c $opt_c");
+}
+
+
+
