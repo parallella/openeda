@@ -28,12 +28,13 @@ if((!defined $opt_e)||(!defined $opt_f)){
 open(FILE,$opt_f);
 if($opt_e eq "icv"){
     while(<FILE>){
-	if(/^\s+([\w\.\:]*?)\s*\:/){
+	if(/^\s+([\w\.\:]*?)\s*\:\s+(.*)/){
 	    $error=$1;
+	    $comment=$2;
 	}
 	elsif (/(\d+)\s+violation[s]* found/){
 	    $number=$1;
-	    print "$error\t$number\n";
+	    print "$number\t$error\t$comment\t\n";
 	}
     }
 }
