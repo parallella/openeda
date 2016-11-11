@@ -25,7 +25,7 @@ if((!defined $opt_bga)){
 }   
 
 ###############################
-#Reading in reference
+#Reading in reference (Q3!)
 ###############################
 ($bgaref,$size)=&read_csv($opt_bga);
 %bga=%$bgaref;
@@ -50,19 +50,45 @@ foreach $row (sort { $a <=> $b } keys %bga) {
 	$row11 = $size + $row;
 	$col11 = $size + $col;
 	
-	if($row>0 && $col>0){
-	    if($field=~/(\w+)_(\d+)_(\d+)/){
-		$prefix  = $1;
-		$field00 = "${prefix}_${row00}_${col00}";
-		$field01 = "${prefix}_${row01}_${col01}";
-		$field10 = "${prefix}_${row10}_${col10}";
-		$field11 = "${prefix}_${row11}_${col11}";
+	if($row==0 && $col==0){ 
+	    #do nothing, use for row/column indicator
+	}
+	elsif($row>0 && $col>0){
+	    #common ground
+	    if ($field=~/VSS/){
+		$field00="VSS";
+		$field01="VSS";
+		$field10="VSS";
+		$field11="VSS";
 	    }
-	    else{
-		$field00=$field;
-		$field01=$field;
-		$field10=$field;
-		$field11=$field;
+	    elsif($field=~/VDD/) {
+		$field00="Q0_${field}";
+		$field01="Q1_${field}";
+		$field10="Q2_${field}";
+		$field11="Q3_${field}";
+	    }
+	    elsif($field=~/(\w+)/){
+		$side=$1;
+		#Q00
+		$prefix  =  $side;
+		$prefix  =~ s/EA/WE/;
+		$prefix  =~ s/SO/NO/;		
+		$field00 = "${prefix}_${row00}_${col00}";
+		#Q01
+		$prefix  =  $side;
+		$prefix  =~ s/EA/EA/;
+		$prefix  =~ s/SO/NO/;	
+		$field01 = "${prefix}_${row01}_${col01}";
+                #Q10
+		$prefix  =  $side;
+		$prefix  =~ s/EA/WE/;
+		$prefix  =~ s/SO/SO/;	
+		$field10 = "${prefix}_${row10}_${col10}";
+           	#Q11
+		$prefix  =  $side;
+		$prefix  =~ s/EA/EA/;
+		$prefix  =~ s/SO/SO/;	
+		$field11 = "${prefix}_${row11}_${col11}";
 	    }
 	    $bigbga{$row00}{$col00} = $field00;
 	    $bigbga{$row01}{$col01} = $field01;
