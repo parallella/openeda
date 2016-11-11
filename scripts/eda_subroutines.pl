@@ -330,26 +330,28 @@ sub read_csv {
  my @list;
  my $field;
  my $i;
- my $line;
+ my $row;
+ my $col;
  my %hash;
  my $size;
 
  open(FILE, $file);
  #start line count at 0 (matches with array)
- $line=0;
+ $row=0;
  while(<FILE>){
      # parse line based on comma delimeter
      @list=split('\,',$_);
+     chomp(@list);
      $size=$#list;
      # copy all csv fields into a neat hash (we will sort later)
-     for $i (0 .. $size) {
-	 $hash{$line}{$i}=$list[$i];
+     for $col (0 .. $size) {
+	 $hash{$row}{$col}=$list[$col];
      }
      # update line number
-     $line++;
+     $row++;
  }
  #return hash and array size
  return (\%hash,$size);
 }
-
+##############################################################################
 1;
