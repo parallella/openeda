@@ -71,18 +71,18 @@ while(<FILE>){
 	    $suffix="_N";
 	}
 	$index=floor($index/2);
-	if($index>210){
+	if($index>105){
 	    $side="Top";
-	} elsif($index>140) {
+	} elsif($index>70) {
 	    $side="Right";
-	}elsif($index>70) {
+	}elsif($index>35) {
 	    $side="Bottom";
 	}else {
 	    $side="Left";
 	}
 	print "$number,$root$suffix$index,Bidirectional,1,Short,,$side,$section\n";
     } elsif ($name=~ /CTRL/){                         # EACTRL
-	print "$number,$name,Bidirectional,1,Short,,Left,$section\n";
+	print "$number,$name,Bidirectional,1,Short,,Top,$section\n";
     }
     elsif ($name=~ /VDD|VSS/){                        # VSS
 	#set side (max 70/side)
@@ -95,10 +95,10 @@ while(<FILE>){
 		    $side="Right";
 		}elsif($i>70) {
 		    $side="Bottom";
-		}elsif($i>70) {
+		}else {
 		    $side="Left";
 		}
-		print "$list[$i],$name,Power,1,Short,,$side,$section\n";
+		print "$list[$i],${name}$i,Power,1,Short,,$side,$section\n";
 	    }
 	}
 	$sighash{$name}=$number;
