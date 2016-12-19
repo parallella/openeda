@@ -90,6 +90,8 @@ close(FILE);
 # Check for Missing Connections
 ###############################
 
+
+
 ###############################
 #Write Out Netlist
 ###############################
@@ -99,7 +101,7 @@ print FILE "BUMP #, SIGNAL, BUMP,DIE-X, DIE-Y, BGA-BALLS\n";
 $count=0;
 foreach $bump (sort keys %netlist){
     if( @{$netlist{$bump}{balls}} > 0 ) {
-	print FILE "$count $netlist{$bump}{net},$bump,$netlist{$bump}{x},$netlist{$bump}{y},@{$netlist{$bump}{balls}}\n";
+	print FILE "$count,$netlist{$bump}{net},$bump,$netlist{$bump}{x},$netlist{$bump}{y},@{$netlist{$bump}{balls}}\n";
     } 
     else {
 	print "ERROR: MISSING BALL FOR BUMP $bump\n";
