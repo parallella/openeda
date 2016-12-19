@@ -41,23 +41,23 @@ while(<FILE>){
     #Find Section based on quarter layout
     ############################################################
     if($name=~ /NO/){
-	$section=sec1;
+	$section=1;
     } elsif($name=~ /EA/){
-	$section=sec2;
+	$section=2;
     } elsif($name=~ /WE/){
-	$section=sec3;
+	$section=3;
     } elsif($name=~ /SO/){
-	$section=sec4;
+	$section=4;
     } elsif($name=~ /Q0/){
-	$section=sec5;
+	$section=5;
     } elsif($name=~ /Q1/){
-	$section=sec6;
+	$section=6;
     } elsif($name=~ /Q2/){
-	$section=sec7;
+	$section=7;
     } elsif($name=~ /Q3/){
-	$section=sec8;
+	$section=8;
     } elsif($name=~ /VSS/){
-	$section=sec9;
+	$section=9;
     }
     ############################################################
     #Print out Orcad format spreasheet for parts creation
@@ -71,14 +71,10 @@ while(<FILE>){
 	    $suffix="_N";
 	}
 	$index=floor($index/2);
-	if($index>105){
+	if($index>128){
 	    $side="Top";
-	} elsif($index>70) {
-	    $side="Right";
-	}elsif($index>35) {
+	} else {
 	    $side="Bottom";
-	}else {
-	    $side="Left";
 	}
 	print "$number,$root$suffix$index,Bidirectional,1,Short,,$side,$section\n";
     } elsif ($name=~ /CTRL/){                         # EACTRL
@@ -89,14 +85,10 @@ while(<FILE>){
 	if(!(exists $sighash{$name})){
 	    @list=split('\s',$number);
 	    for $i (0..$#list){
-		if($i>210){
+		if($i>128){
 		    $side="Top";
-		} elsif($i>140) {
-		    $side="Right";
-		}elsif($i>70) {
+		} else {
 		    $side="Bottom";
-		}else {
-		    $side="Left";
 		}
 		print "$list[$i],${name}$i,Power,1,Short,,$side,$section\n";
 	    }
