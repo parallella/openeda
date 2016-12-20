@@ -67,16 +67,13 @@ while(<FILE>){
 	$index=$2;
 	if($index%2== 0){
 	    $suffix="_P";
+	    $side="Bottom";
 	} else {
 	    $suffix="_N";
+	    $side="Top";
 	}
 	$index=floor($index/2);
-	if($index>128){
-	    $side="Top";
-	} else {
-	    $side="Bottom";
-	}
-	print "$number,$root$suffix$index,Bidirectional,1,Short,,$side,$section\n";
+	$signalhash{$root}{$suffix}{$index}="$number,$root$suffix$index,Bidirectional,1,Short,,$side,$section";
     } elsif ($name=~ /CTRL/){                         # EACTRL
 	print "$number,$name,Bidirectional,1,Short,,Top,$section\n";
     }
@@ -98,3 +95,11 @@ while(<FILE>){
     }
 }
 	
+# printing out sorted bus signals
+foreach my $root (sort keys %signalhash){
+    foreach my $suffix (sort keys %{$signalhash{$root}}){
+	foreach my $index (sort { $a <=> $b} keys %{$signalhash{$root}{$suffix}}){	
+	    print "$signalhash{$root}{$suffix}{$index}\n";
+	}
+    }
+}
