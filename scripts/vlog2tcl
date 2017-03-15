@@ -33,8 +33,6 @@ if((!defined $opt_v)){
 ############################
 
 &vlog_rm_comments($opt_v,"/tmp/tmp.v");
-
-($sigref, $module) = &vlog_get_ports("/tmp/tmp.v");
 open(FILE,"/tmp/tmp.v");
 while(<FILE>){
     if(/\`define\s+(\w+)\s+(.*)/){

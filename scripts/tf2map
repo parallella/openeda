@@ -7,7 +7,6 @@
 #use strict
 use Getopt::Long;
 use File::Spec;
-my $REV = "3.11.2.25";
 my $Usage =<<EOF;
 ======================================================================
 Function   : Extracts LEF layers from Synopsys technology file      
