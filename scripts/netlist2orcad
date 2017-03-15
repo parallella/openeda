@@ -1,0 +1,105 @@
+#!/usr/bin/perl
+use POSIX;
+use Cwd qw/abs_path/;
+use Getopt::Long;
+use File::Spec;
+my $abs_path = abs_path($0);
+$abs_path=~ s/(.*)\/([\w\.]+)/$1/;
+require "$abs_path/eda_subroutines.pl";
+#####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+#####################################################################
+my $Usage =<<EOF;
+======================================================================
+Usage : netlist2orcad -n <Netlist>
+======================================================================
+EOF
+my $result =  GetOptions('n:s');
+if((!defined $opt_n)){
+  print "$Usage";               
+  exit;
+}
+###############################
+#Reading in File
+###############################
+print "Number,Name,Type,Pin,Visibility,Shape,Pin Group,Position,Section\n";
+#sheet1  ea signals (four sides)
+#sheet2  ea ctrl: vddio, vddm,vddc,vdd_+ctrl
+#same for others
+#sheet9 VSS, 4 sides
+
+open(FILE, "$opt_n");
+while(<FILE>){
+    chomp($_);
+    @list=split('\,',$_);
+    $number=$list[5];
+    $name=$list[1];
+
+    ############################################################
+    #Find Section based on quarter layout
+    ############################################################
+    if($name=~ /NO/){
+	$section=1;
+    } elsif($name=~ /EA/){
+	$section=2;
+    } elsif($name=~ /WE/){
+	$section=3;
+    } elsif($name=~ /SO/){
+	$section=4;
+    } elsif($name=~ /Q0/){
+	$section=5;
+    } elsif($name=~ /Q1/){
+	$section=6;
+    } elsif($name=~ /Q2/){
+	$section=7;
+    } elsif($name=~ /Q3/){
+	$section=8;
+    } elsif($name=~ /VSS/){
+	$section=9;
+    }
+    ############################################################
+    #Print out Orcad format spreasheet for parts creation
+    ############################################################
+    if($name=~/^(\w\w)(\d+)/){                          #EA87
+	$root=$1;
+	$index=$2;
+	if($index%2== 0){
+	    $suffix="_P";
+	    $side="Bottom";
+	} else {
+	    $suffix="_N";
+	    $side="Top";
+	}
+	$index=floor($index/2);
+	$signalhash{$root}{$suffix}{$index}="$number,$root$suffix$index,Bidirectional,1,Short,,$side,$section";
+    } elsif ($name=~ /CTRL/){                         # EACTRL
+	print "$number,$name,Bidirectional,1,Short,,Top,$section\n";
+    }
+    elsif ($name=~ /VDD|VSS/){                        # VSS
+	#set side (max 70/side)
+	if(!(exists $sighash{$name})){
+	    @list=split('\s',$number);
+	    for $i (0..$#list){
+		if($i>128){
+		    $side="Top";
+		} else {
+		    $side="Bottom";
+		}
+		print "$list[$i],${name}$i,Power,1,Short,,$side,$section\n";
+	    }
+	}
+	$sighash{$name}=$number;
+    }  else {
+    }
+}
+	
+# printing out sorted bus signals
+foreach my $root (sort keys %signalhash){
+    foreach my $suffix (sort keys %{$signalhash{$root}}){
+	foreach my $index (sort { $a <=> $b} keys %{$signalhash{$root}{$suffix}}){	
+	    print "$signalhash{$root}{$suffix}{$index}\n";
+	}
+    }
+}

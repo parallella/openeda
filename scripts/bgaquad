@@ -1,0 +1,109 @@
+#!/usr/bin/perl
+use Cwd qw/abs_path/;
+use Getopt::Long;
+use File::Spec;
+my $abs_path = abs_path($0);
+$abs_path=~ s/(.*)\/([\w\.]+)/$1/;
+require "$abs_path/eda_subroutines.pl";
+#####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+#####################################################################
+#use strict;
+my %libhash;
+my %cellhash;
+my $Usage =<<EOF;
+======================================================================
+Usage   : bgaquad -bga <BGA Ball map, CSV formatted>
+======================================================================
+EOF
+my $result =  GetOptions('bga:s');
+if((!defined $opt_bga)){
+  print "$Usage";               
+  exit;
+}   
+
+###############################
+#Reading in reference (Q3!)
+###############################
+($bgaref,$size)=&read_csv($opt_bga);
+%bga=%$bgaref;
+
+#####################################################
+# Duplicate
+#####################################################
+foreach $row (sort { $a <=> $b } keys %bga) {
+    foreach $col (sort { $a <=> $b } keys %{$bga{$row}}) {
+	$field=$bga{$row}{$col};
+	chomp($field);
+	#quadrant 00
+	$row00 = $size+1 - $row;
+	$col00 = $size+1 - $col;
+	#quadrant01 (row0, col1)
+	$row01 = $size+1 - $row;
+	$col01 = $size + $col;
+	#quadrant10 (row1, col0)
+	$row10 = $size + $row;
+	$col10 = $size+1 - $col;
+	#quadrant11 (row1, col1)
+	$row11 = $size + $row;
+	$col11 = $size + $col;
+	
+	if($row==0 && $col==0){ 
+	    #do nothing, use for row/column indicator
+	}
+	elsif($row>0 && $col>0){
+	    #common ground
+	    if ($field=~/VSS/){
+		$field00="VSS";
+		$field01="VSS";
+		$field10="VSS";
+		$field11="VSS";
+	    }
+	    elsif($field=~/VDD/) {
+		$field00="Q0_${field}";
+		$field01="Q1_${field}";
+		$field10="Q2_${field}";
+		$field11="Q3_${field}";
+	    }
+	    elsif($field=~/(\w+)/){
+		$side=$1;
+		#Q00
+		$prefix  =  $side;
+		$prefix  =~ s/EA/WE/;
+		$prefix  =~ s/SO/NO/;		
+		$field00 = "${prefix}_${row00}_${col00}";
+		#Q01
+		$prefix  =  $side;
+		$prefix  =~ s/EA/EA/;
+		$prefix  =~ s/SO/NO/;	
+		$field01 = "${prefix}_${row01}_${col01}";
+                #Q10
+		$prefix  =  $side;
+		$prefix  =~ s/EA/WE/;
+		$prefix  =~ s/SO/SO/;	
+		$field10 = "${prefix}_${row10}_${col10}";
+           	#Q11
+		$prefix  =  $side;
+		$prefix  =~ s/EA/EA/;
+		$prefix  =~ s/SO/SO/;	
+		$field11 = "${prefix}_${row11}_${col11}";
+	    }
+	    $bigbga{$row00}{$col00} = $field00;
+	    $bigbga{$row01}{$col01} = $field01;
+	    $bigbga{$row10}{$col10} = $field10;
+	    $bigbga{$row11}{$col11} = $field11;
+	}
+    }
+}
+
+#####################################################
+# Print Out Big Hash
+#####################################################
+foreach $row (sort { $a <=> $b } keys %bigbga) {
+    foreach $col (sort { $a <=> $b } keys %{$bigbga{$row}}) {
+	print "$bigbga{$row}{$col},\t";
+    }
+    print "\n";
+}

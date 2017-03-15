@@ -321,5 +321,37 @@ sub read_floorplan {
     close (FILE);
     return (\%signal);		
 }
-1;
 
+
+############################################################################
+# parse csv file
+sub read_csv {
+ my $file   = $_[0];
+ my @list;
+ my $field;
+ my $i;
+ my $row;
+ my $col;
+ my %hash;
+ my $size;
+
+ open(FILE, $file);
+ #start line count at 0 (matches with array)
+ $row=0;
+ while(<FILE>){
+     # parse line based on comma delimeter
+     @list=split('\,',$_);
+     chomp(@list);
+     $size=$#list;
+     # copy all csv fields into a neat hash (we will sort later)
+     for $col (0 .. $size) {
+	 $hash{$row}{$col}=$list[$col];
+     }
+     # update line number
+     $row++;
+ }
+ #return hash and array size
+ return (\%hash,$size);
+}
+##############################################################################
+1;

@@ -1,0 +1,113 @@
+#!/usr/bin/perl
+use Cwd qw/abs_path/;
+use Getopt::Long;
+use File::Spec;
+my $abs_path = abs_path($0);
+$abs_path=~ s/(.*)\/([\w\.]+)/$1/;
+require "$abs_path/eda_subroutines.pl";
+#####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+#####################################################################
+#use strict;
+my %libhash;
+my %cellhash;
+my $Usage =<<EOF;
+
+======================================================================
+Usage : aif2netlist -aif <AIF Format Chip Bump Input File>
+                    -bga <BGA signal Mapping Input File>
+                    -o   <Netlist Output File> 
+                    [-mh  <Mirror Die Horizontal>]
+                    [-mv  <Mirror Die Vertical>]
+======================================================================
+EOF
+
+my $result =  GetOptions('aif:s', 'bga:s', 'mv:s', 'mh:s', 'o:s');
+if((!defined $opt_aif) || (!defined $opt_bga) || (!defined $opt_o) ){
+  print "$Usage";               
+  exit;
+}
+
+#Need to flip die for flip-chip
+if(defined $opt_mv){
+    $mv = -1;
+}else{
+    $mv = 1;
+}
+if(defined $opt_mh){
+    $mh = -1;
+}else{
+    $mh = 1;
+}
+
+###############################
+#JEDEC Ball Numbering
+###############################
+@jedec = (0,A,B,C,D,E,F,G,H,J,K,L,M,N,P,R,T,U,V,W,Y,AA,AB,AC,AD,AE,AF,AG,AH,AJ,AK,AL,AM,AN,AP,AR,AT,AU,AV,AW,AY,BA,BB,BC,BD,BE,BF,BG,BH,BJ);
+
+###############################
+#Reading in BGA
+###############################
+($bgaref,$size)=&read_csv($opt_bga);
+%bga=%$bgaref;
+
+foreach $row (keys %bga){
+    foreach $col (keys %{$bga{$row}}){
+	if($col > 0 && $row > 0){
+	    $ball = "$jedec[$row]$col";
+	    #push ball into array
+	    $pin = $bga{$row}{$col};
+	    $pin =~ s/\s//g;
+	    push(@{$balls{$pin}},$ball);
+	}
+    }
+}
+
+###############################
+#Reading in AIF
+###############################
+
+open(FILE,"$opt_aif");
+while(<FILE>){
+    if(/\;/){
+	#comment
+    } elsif(/^WIDTH\=(.*)/){
+	$width = $1;
+    } elsif(/HEIGHT\=(.*)/){
+	$height = $1;
+    } elsif(/^([\w\[\]]+)\s+([\w\[\]]+)\s+([\w\[\]]+)\s+([\d\.\-]+)\s+([\d\.\-]+)/){ #check for bumps with alphanumeric net names, ie no "-"
+	$netlist{$2}{"net"} = $1;
+	$netlist{$2}{"x"}   = $mh * $4;
+	$netlist{$2}{"y"}   = $mv * $5;
+	@{$netlist{$2}{"balls"}}=@{$balls{$netlist{$2}{net}}};
+    }
+}
+close(FILE);
+
+###############################
+# Check for Missing Connections
+###############################
+
+
+
+###############################
+#Write Out Netlist
+###############################
+
+open(FILE,">$opt_o");
+print FILE "BUMP #, SIGNAL, BUMP,DIE-X, DIE-Y, BGA-BALLS\n";
+$count=0;
+foreach $bump (sort keys %netlist){
+    if( @{$netlist{$bump}{balls}} > 0 ) {
+	print FILE "$count,$netlist{$bump}{net},$bump,$netlist{$bump}{x},$netlist{$bump}{y},@{$netlist{$bump}{balls}}\n";
+    } 
+    else {
+	print "ERROR: MISSING BALL FOR BUMP $bump\n";
+    }
+    $count=$count+1;
+}
+close(FILE);
+
+
