@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+#####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+#####################################################################
+#use strict
+use Getopt::Long;
+use File::Spec;
+my $Usage =<<EOF;
+======================================================================
+Function   : Converts Verilog Netlist to a Stupid CDL Netlist
+
+Usage      : vlog2cdl -v  <VerilogInputs>
+                      -o  <OutputFile> 
+                      [-sp <SpiceInputs>]
+         
+Example    : vlog2cdl -v "my1.v my2.v" -o netlist.cdl
+======================================================================
+EOF
+my $result =  GetOptions('v:s','o:s');
+if((!defined $opt_v)){
+  print "$Usage";               
+  exit;
+}
+if(defined $opt_sp){
+    $spice_in ="-spice $opt_sp"
+}   
+system("icv_nettran -verilog $opt_v $spice_in -outName $opt_o -wireLog wire_shorts.log");
+

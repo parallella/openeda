@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+#####################################################################
+#Copyright : Copyright (C) 2016 Parallella Foundation
+#License   : MIT
+#Author    : Andreas Olofsson
+#####################################################################
+#use strict
+use Getopt::Long;
+use File::Spec;
+my $Usage =<<EOF;
+======================================================================
+Function   : Converts Verilog Netlist to Spice Netlist
+
+Usage      : vlog2spice -v  <VerilogInputs>
+                        -o  <OutputFile> 
+                        [-sp <SpiceInputs>]
+         
+Example    : vlog2spice -v "my1.v my2.v" -o netlist.sp 
+======================================================================
+EOF
+my $result =  GetOptions('v:s','o:s','sp:s');
+if((!defined $opt_v)){
+  print "$Usage";               
+  exit;
+}
+if(defined $opt_sp){
+    $spice_in ="-sp $opt_sp"
+}   
+system("icv_nettran -verilog $opt_v $spice_in -outName $opt_o -outType spice -sp-dummyNets -wireLog icv_shorts.log -acctFile icv_devices.log");
+
